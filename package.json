@@ -15,7 +15,7 @@
   "scripts": {
     "start": "concurrently --kill-others \"npm run start-client\" \"npm run start-server\"",
     "start-client": "react-app-rewired start",
-    "start-server": "nodemon server/index.js",
+    "start-server": "nodemon server.js",
     "build-client": "react-app-rewired build"
   },
   "eslintConfig": {
