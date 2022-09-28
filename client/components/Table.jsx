@@ -100,7 +100,7 @@ const Table = () => {
         <Button variant="outlined" endIcon={<SentimentSatisfiedAltIcon />}>
           Unblock
         </Button>
-        <Button variant="outlined" startIcon={<DeleteIcon />}>
+        <Button variant="outlined" endIcon={<DeleteIcon />}>
           Delete
         </Button>
       </Stack>
