@@ -1,4 +1,4 @@
-/* 
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -17,11 +17,6 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello Express")
-  console.log("Hello express")
-})
-
 app.get("/api/get", (req, res) => {
   const sqlGet = "SELECT * FROM users";
   db.query(sqlGet, (error, result) => {
@@ -31,22 +26,24 @@ app.get("/api/get", (req, res) => {
   });
 });
 
-app.post("/api/post", (req, res) => {
-  const { name, email, contact } = req.body;
-  const sqlInsert = "INSERT INTO users (name, email, contact) VALUES (?, ?, ?)"
-  db.query(sqlInsert, [name, email, contact], (error, result) => {
+app.put("/api/block/:id", (req, res) => {
+  const { id } = req.params;
+  const { is_blocked } = req.body;
+  const sqlUpdate = "UPDATE users SET is_blocked = 1 WHERE user_id = ?";
+
+  db.query(sqlUpdate, [is_blocked, id], (error, result) => {
     if (error) {
       console.log(error);
-    };
+    } res.send(result);
   });
 });
 
-app.put("/api/update/:id", (req, res) => {
+app.put("/api/unblock/:id", (req, res) => {
   const { id } = req.params;
-  const { name, email, contact } = req.body;
-  const sqlUpdate = "UPDATE users SET name = ?, email = ?, contact = ? WHERE id = ?";
+  const { is_blocked } = req.body;
+  const sqlUpdate = "UPDATE users SET is_blocked = 0 WHERE user_id = ?";
 
-  db.query(sqlUpdate, [name, email, contact, id], (error, result) => {
+  db.query(sqlUpdate, [is_blocked, id], (error, result) => {
     if (error) {
       console.log(error);
     } res.send(result);
@@ -55,7 +52,7 @@ app.put("/api/update/:id", (req, res) => {
 
 app.delete("/api/remove/:id", (req, res) => {
   const { id } = req.params;
-  const sqlRemove = "DELETE FROM users WHERE id = ?"
+  const sqlRemove = "DELETE FROM users WHERE user_id = ?"
   db.query(sqlRemove, id, (error, result) => {
     if (error) {
       console.log(error);
@@ -63,18 +60,7 @@ app.delete("/api/remove/:id", (req, res) => {
   });
 });
 
-app.get("/api/get/:id", (req, res) => {
-  const { id } = req.params;
-  const sqlGet = "SELECT * FROM users WHERE id = ?";
-  db.query(sqlGet, id, (error, result) => {
-    if (error) {
-      console.log(error);
-    };
-    res.send(result);
-  });
-}); 
-
 app.listen(5000, () => {
   console.log("Server is listening on port 5000")
 });
-*/
+
