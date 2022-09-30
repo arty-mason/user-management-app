@@ -12,6 +12,22 @@ const db = mysql.createPool({
   database: 'user_management'
 });
 
+const mapModelToDTO = (model) => {
+  const isBlocked = Boolean(model.is_blocked.readInt8());
+
+  const dto = {
+    id: model.user_id,
+    name: model.full_name,
+    email: model.email,
+    createdUTC: model.created_utc,
+    lastLoginUTC: model.last_login_utc,
+    status: isBlocked ? 'Blocked' : 'Unblocked',
+  };
+
+  return dto;
+};
+
+
 app.use(express.static("build"));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,7 +38,7 @@ app.get("/api/get", (req, res) => {
   db.query(sqlGet, (error, result) => {
     if (error) {
       console.log(error);
-    } res.send(result);
+    } res.send(result.map(item => mapModelToDTO(item)));
   });
 });
 
