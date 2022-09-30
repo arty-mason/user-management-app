@@ -5,6 +5,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const cors = require("cors");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 const db = mysql.createPool({
   host: "localhost",
@@ -13,13 +15,36 @@ const db = mysql.createPool({
   database: "user_management",
 });
 
-const getPasswordHash = (password, salt, iterations, keylen, digest) => {
+const getPasswordHash = (password, salt) => {
   return new Promise((res, rej) => {
     crypto.pbkdf2(password, salt, 31000, 32, "sha256", (err, key) => {
-      err ? rej(err) : res(key.toString('base64'));
+      err ? rej(err) : res(key.toString("base64"));
     });
   });
 };
+
+passport.use(
+  new LocalStrategy(async (email, password, cb) => {
+    try {
+      const sqlQuery = "SELECT * FROM users WHERE email = ?";
+      const user = await db.promise().query(sqlQuery, [email]);
+      if (!user) {
+        return cb(null, false, { message: "Incorrect username" });
+      }
+
+      const { hashed_password, salt } = user;
+      const hashToCheck = getPasswordHash(password, Buffer.from(salt, 'base64'));
+
+      if (!hashToCheck === hashed_password) {
+        return cb(null, false, { message: "Incorrect password" });
+      }
+
+      return cb(null, user);
+    } catch (err) {
+      cb(err);
+    }
+  })
+);
 
 const mapModelToDTO = (model) => {
   const isBlocked = Boolean(model.is_blocked.readInt8());
@@ -52,13 +77,28 @@ app.post("/api/signup", async (req, res, next) => {
     const sqlQuery =
       "INSERT INTO users (email, full_name, hashed_password, salt, created_utc, last_login_utc, is_blocked) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    await db.promise().query(sqlQuery, [email, fullName, hashedPassword, salt.toString('base64'), utcNow, utcNow, 0]);
+    await db
+      .promise()
+      .query(sqlQuery, [
+        email,
+        fullName,
+        hashedPassword,
+        salt.toString("base64"),
+        utcNow,
+        utcNow,
+        0,
+      ]);
 
-    // const user = {
-    //   id,
-    //   email,
-    // }
+    const user = {
+      id: 123,
+      email,
+    }
     // req.logIn()
+
+    req.login(user, function (err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
     res.status(200).json({ message: "OK" });
   } catch (err) {
     res.status(500).send(err);
