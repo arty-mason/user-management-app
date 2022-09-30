@@ -1,10 +1,8 @@
 import { Box, TextField, Typography } from "@mui/material";
 
-import React, { useState } from "react";
+import React from "react";
 
 const SignUp = () => {
-  const [input, setInput] = useState("");
-
   const handleSubmit = () => {};
   return (
     <Box
