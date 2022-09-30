@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -15,8 +15,8 @@ const columns = [
   { field: "id", headerName: "ID", width: 100 },
   { field: "name", headerName: "Full name", width: 150 },
   { field: "email", headerName: "Email", type: "string", width: 200 },
-  { field: "createdUTC", headerName: "Registered at", width: 170 },
-  { field: "lastLoginUTC", headerName: "Last online", width: 150 },
+  { field: "createdUTC", headerName: "Registered at", width: 200 },
+  { field: "lastLoginUTC", headerName: "Last online", width: 200 },
   { field: "status", headerName: "Status", width: 150 },
 ];
 
@@ -28,11 +28,11 @@ const Home = () => {
 
     const users = response.data.map((user) => ({
       ...user,
-      createdUTC: "123",
-      lastLoginUTC: "123",
+      createdUTC: DateTime.fromISO(user.createdUTC).toFormat("ff"),
+      lastLoginUTC: DateTime.fromISO(user.lastLoginUTC).toFormat("ff"),
     }));
 
-    setData(response.data);
+    setData(users);
   };
 
   useEffect(() => {
