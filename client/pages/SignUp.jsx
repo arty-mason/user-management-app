@@ -1,8 +1,11 @@
 import { Box, TextField, Typography } from "@mui/material";
 
-import React from "react";
+import React, { useState } from "react";
 
 const SignUp = () => {
+  const [input, setInput] = useState("");
+
+  const handleSubmit = () => {};
   return (
     <Box
       component="form"
@@ -50,6 +53,7 @@ const SignUp = () => {
           label="Enter your password"
           type="password"
           variant="outlined"
+          onSubmit={handleSubmit}
         />
       </Box>
     </Box>

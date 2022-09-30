@@ -83,16 +83,24 @@ const Home = () => {
         >
           Выделить все /<br></br> Снять выделение
         </Typography>
-        <Button variant="outlined" endIcon={<SentimentVeryDissatisfiedIcon />}>
+        <Button
+          variant="outlined"
+          endIcon={<SentimentVeryDissatisfiedIcon />}
+          onClick={() => blockContact(data.id)}
+        >
           Block
         </Button>
-        <Button variant="outlined" endIcon={<SentimentSatisfiedAltIcon />}>
+        <Button
+          variant="outlined"
+          endIcon={<SentimentSatisfiedAltIcon />}
+          onClick={() => unblockContact(data.id)}
+        >
           Unblock
         </Button>
         <Button
           variant="outlined"
           endIcon={<DeleteIcon />}
-          onClick={() => deleteContact}
+          onClick={() => deleteContact(data.id)}
         >
           Delete
         </Button>
